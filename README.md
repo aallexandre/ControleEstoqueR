@@ -202,6 +202,14 @@ Os 13 testes verificam as regras de negócio, arredondamento, datas, validaçõe
 | `estoque/tests.py` | Testes automatizados |
 
 
+## Aplicação publicada
+
+A aplicação também está disponível online:
+
+**https://controleestoquer.onrender.com**
+
+A hospedagem utiliza Render, Gunicorn e WhiteNoise. O banco de dados continua sendo SQLite; portanto, esta publicação é adequada para demonstração, mas não deve ser considerada uma configuração de produção definitiva com armazenamento persistente.
+
 ## Escopo e execução em produção
 
-O projeto está configurado para execução local, com `DEBUG=True` e chave de demonstração. Hospedagem pública exige configuração de produção, servidor apropriado e armazenamento persistente. Esta versão não inclui autenticação, exclusão de ingredientes ou histórico de movimentações.
+O projeto pode ser executado localmente e também está publicado para demonstração. A configuração pública usa `DEBUG=False`, uma lista de hosts permitidos e um servidor apropriado para Django. Esta versão não inclui autenticação, exclusão de ingredientes ou histórico de movimentações.
