@@ -1,149 +1,207 @@
-# Stock Control — ControleEstoqueR
+# Stock Control
 
-Aplicação Django para planejar a reposição mensal de ingredientes de restaurante. A lista é calculada no servidor e apresentada em templates HTML, com CSS local, cadastro, edição e banco SQLite. Não depende de React, API separada, JavaScript ou serviços externos para funcionar após a instalação.
+**Controle de estoque e planejamento de reposição para restaurantes.**
 
-## Executar no Windows
+O Stock Control organiza o cadastro de ingredientes e gera listas de compras com base no estoque disponível, no consumo do período e na validade dos produtos. Desenvolvido em Django, utiliza uma interface em HTML/CSS e persistência local em SQLite.
 
-Versões testadas: **Python 3.12.14 e Django 5.2.17**. Instale Python 3.12 ou 3.13 pelo site oficial, caso necessário. Os comandos abaixo usam diretamente o Python do ambiente virtual e não exigem ativação nem mudança da política do PowerShell.
+## Funcionalidades
 
-Abra o PowerShell na pasta `ControleEstoqueR`, que contém este README e `manage.py`. O caminho atual é:
+- Cadastro e edição de ingredientes com unidades em Kg, L e un.
+- Cálculo automático do estoque atual e da quantidade aproveitável.
+- Reposição por meta, vencimento ou falta antecipada, com margem de 20% sobre o consumo.
+- Consulta por data de referência e apresentação do motivo de cada compra.
+- Validação dos dados no servidor e interface adaptável a diferentes tamanhos de tela.
+- Dados de demonstração e testes automatizados.
 
-```text
-C:\Users\alexa\Documents\Codex\2026-09-13\leia-guia-codex-estoque-md-e-3\outputs\ControleEstoqueR
+## Tecnologias
+
+| Componente | Tecnologia |
+|---|---|
+| Backend | Python e Django 5.2.17 |
+| Interface | Django Templates, HTML e CSS |
+| Banco de dados | SQLite |
+| Cálculos numéricos | Decimal |
+| Testes | Framework de testes do Django |
+
+## Instalação local
+
+### Pré-requisitos
+
+- **Python 3.12 ou 3.13**, com `pip` e suporte a ambientes virtuais. Baixe em [python.org](https://www.python.org/downloads/). No Windows, marque **Add python.exe to PATH** durante a instalação.
+- **Git**, somente se escolher baixar o projeto pelo terminal. Também é possível baixar um ZIP pelo GitHub.
+- Internet para baixar o projeto e instalar as dependências. Depois disso, a aplicação funciona localmente.
+
+O suporte a SQLite acompanha o Python e dispensa a instalação de um servidor de banco de dados. As dependências estão fixadas em `requirements.txt`. A instalação foi validada no Windows com Python 3.12.14; as instruções para Linux e macOS estão incluídas como alternativa, sem validação nesses sistemas.
+
+### 1. Obter o código-fonte
+
+Escolha uma das opções:
+
+**Com Git:** abra um terminal na pasta em que deseja guardar o projeto e execute:
+
+```sh
+git clone https://github.com/aallexandre/ControleEstoqueR.git
+cd ControleEstoqueR
 ```
 
-O banco também mudou de caminho com a pasta: no DB Browser, abra `db.sqlite3` dentro de `ControleEstoqueR`. Seus dados existentes foram mantidos.
+**Sem Git:** na [página do repositório](https://github.com/aallexandre/ControleEstoqueR), clique em **Code → Download ZIP**. Extraia o ZIP e abra um terminal dentro da pasta extraída, normalmente `ControleEstoqueR-main`.
 
-Para uma instalação nova:
+Nos próximos passos, o terminal deve estar na pasta que contém **`manage.py` e `requirements.txt`**. No Windows, você pode abrir essa pasta no Explorador de Arquivos, digitar `powershell` na barra de endereço e pressionar Enter.
+
+### 2. Preparar o ambiente e iniciar a aplicação
+
+#### Windows — PowerShell
+
+Na pasta do projeto, execute os comandos em sequência:
 
 ```powershell
+# Cria um ambiente Python exclusivo para o projeto
 py -3.12 -m venv .venv
+
+# Instala as dependências
 .\.venv\Scripts\python.exe -m pip install -r requirements.txt
+
+# Cria o banco local e suas tabelas
 .\.venv\Scripts\python.exe manage.py migrate
+
+# Opcional: adiciona oito ingredientes de demonstração
 .\.venv\Scripts\python.exe manage.py carregar_exemplos
-.\.venv\Scripts\python.exe manage.py runserver 127.0.0.1:8002
+
+# Inicia o sistema
+.\.venv\Scripts\python.exe manage.py runserver 127.0.0.1:8000
 ```
 
-Abra http://127.0.0.1:8002/ no navegador. A página inicial usa o dia atual em Fortaleza. Para parar o servidor, pressione Ctrl+C no terminal. A data pode ser alterada para consultar outro cenário; ela não está vinculada ao prazo de entrega do trabalho.
+Se você instalou Python 3.13, troque apenas o primeiro comando por `py -3.13 -m venv .venv`. Se o comando `py` não existir, confira a versão com `python --version` e use `python -m venv .venv` com uma das versões indicadas acima.
 
-Se `py` não for reconhecido, use `python -m venv .venv` ou o caminho completo do seu Python:
+Esses comandos usam diretamente o Python do ambiente virtual. Não é necessário ativá-lo nem alterar a política de execução do PowerShell.
+
+#### Linux e macOS
+
+Com Python 3.12 ou 3.13 disponível como `python3`, execute na pasta do projeto:
+
+```sh
+python3 --version
+python3 -m venv .venv
+.venv/bin/python -m pip install -r requirements.txt
+.venv/bin/python manage.py migrate
+
+# Opcional: dados de demonstração
+.venv/bin/python manage.py carregar_exemplos
+
+.venv/bin/python manage.py runserver 127.0.0.1:8000
+```
+
+Em distribuições Linux que separam o módulo `venv`, instale o pacote correspondente à sua versão do Python se a criação do ambiente informar que ele está ausente.
+
+### 3. Acessar a aplicação
+
+Após a inicialização do servidor, acesse [http://127.0.0.1:8000/](http://127.0.0.1:8000/) no navegador do mesmo computador.
+
+## Utilização
+
+- A página inicial usa a data atual no fuso `America/Fortaleza`. Para consultar outra data, altere **Data de referência** e clique em **Atualizar lista**.
+- Clique em **Cadastrar ingrediente** para informar nome, unidade, meta, estoque inicial, consumo e validade.
+- Marque **Acabou antes do fim do mês** somente quando houve falta antecipada.
+- Clique no nome de um ingrediente na tabela para editar seus dados.
+- A lista de compras é recalculada pelo Django. Itens sem necessidade de compra são omitidos.
+
+O terminal deve permanecer aberto durante a execução. Para encerrar o servidor, pressione **Ctrl+C**. O aviso de servidor de desenvolvimento é esperado neste ambiente local.
+
+### Execuções posteriores
+
+Após a instalação inicial, execute apenas o comando de inicialização na pasta do projeto.
+
+**Windows:**
 
 ```powershell
-& 'C:\caminho\para\python.exe' -m venv .venv
+.\.venv\Scripts\python.exe manage.py runserver 127.0.0.1:8000
 ```
 
-No computador desta implementação há também o Python fornecido pelo Codex, que foi usado nos testes. Como alternativa local ao primeiro comando:
+**Linux/macOS:**
 
-```powershell
-& "$env:USERPROFILE\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe" -m venv .venv
+```sh
+.venv/bin/python manage.py runserver 127.0.0.1:8000
 ```
 
-O caminho do Codex pode mudar em atualizações; para uso independente, prefira a instalação normal do Python. Usamos a porta 8002 para evitar o servidor da versão anterior que ainda ocupa a 8000. Se a porta 8002 já estiver em uso, abra o sistema já iniciado ou use `runserver 127.0.0.1:8003` e acesse a porta 8003.
+Não é necessário reinstalar dependências nem carregar os exemplos a cada execução.
 
-## Como usar
+## Persistência e dados de demonstração
 
-1. Escolha a data de referência e clique em **Atualizar lista**.
-2. Clique em **Cadastrar ingrediente**. Informe nome, unidade, meta, estoque inicial, consumo real e validade.
-3. Marque a falta antecipada somente quando o ingrediente acabou antes do mês terminar.
-4. Salve. A tabela e a lista são recalculadas pelo Django.
-5. Para editar, clique no nome do ingrediente na tabela.
+O comando `migrate` cria o arquivo **`db.sqlite3`** na pasta do projeto. Ele armazena os dados cadastrados e permanece no computador após o servidor ser encerrado.
 
-Datas e valores inválidos mostram erros sem salvar alterações e preservam os valores digitados. Kg e L aceitam até duas casas decimais; `un` exige valores inteiros. O consumo deve ficar entre zero e o estoque inicial. Meta e estoque inicial também não podem ser negativos. Falta antecipada exige consumo positivo e sobra zero.
+O banco não é enviado ao GitHub. Cada instalação começa com um banco próprio; para demonstrar o sistema, execute `carregar_exemplos`. O comando adiciona oito ingredientes, usando ontem como validade dos exemplos vencidos e daqui a 30 dias para os válidos. Nomes já existentes são preservados, sem alterar valores ou validades. Se um exemplo for renomeado, uma nova execução poderá recriar o registro com o nome original.
 
-Cada linha segue `Comprar: <quantidade> <unidade> de <ingrediente>`. O motivo aparece separado. Itens com compra zero são omitidos, e medidas diferentes nunca são somadas.
+Os exemplos incluem Farinha para reposição normal, Leite para vencimento, Arroz para falta antecipada, Ovos para arredondamento e Feijão para vencimento junto com falta antecipada. Sal e Açúcar não geram compras no cenário inicial.
 
-## Regras e hipóteses adotadas
+### Transferência e backup
 
-O PDF exige reposição normal, descarte por vencimento e aumento de 20% sobre o consumo quando há falta antecipada. O guia propõe o modelo de dados e as convenções abaixo; elas não são todas exigências expressas da banca.
+Para transferir dados entre instalações, encerre o servidor e copie o arquivo `db.sqlite3` separadamente. Faça backup do banco de destino antes de substituí-lo. O ambiente virtual `.venv` deve ser recriado em cada computador, conforme as instruções de instalação.
 
-| Ordem | Condição | Compra |
+## Regras de negócio
+
+O estoque atual é calculado como **estoque inicial − consumo**, antes do descarte. Estoque inicial e meta são valores independentes.
+
+| Prioridade | Situação | Quantidade a comprar |
 |---|---|---|
-| 1 | Validade anterior à data de referência | Meta inteira; sobra aproveitável zero |
-| 2 | Não vencido e acabou antes do fim do mês | Consumo real × 1,20 |
-| 3 | Caso normal | Máximo entre meta − sobra e zero |
+| 1 | Ingrediente vencido | Meta inteira; estoque aproveitável zero |
+| 2 | Válido, mas acabou antes do fim do mês | Consumo real × 1,20 |
+| 3 | Caso normal | Máximo entre meta − estoque atual e zero |
 
-- **Vencimento tem prioridade sobre falta antecipada.** O PDF não define a prioridade; adotamos essa hipótese porque o cliente pede a meta inteira quando o ingrediente vence.
-- **Válido no dia da validade**, vencido a partir do dia seguinte: convenção adotada.
-- Cada registro representa **um ingrediente, um período e um lote**, sem histórico de movimentações ou entradas intermediárias. Atualizar um registro substitui seu cenário anterior.
-- Sobra/estoque atual = estoque inicial − consumo. Estoque inicial e meta são independentes. A tabela mostra a sobra antes do descarte e a quantidade aproveitável.
-- Estoque zero no fim do mês não prova falta antecipada; por isso há um campo explícito.
-- O consumo é informado, nunca aleatório nem previsto. A margem usa o **consumo real**, não a meta antiga.
-- A meta cadastrada **não é alterada automaticamente**: o PDF não determina persistir uma nova meta.
-- Compras em `un` são arredondadas para cima para inteiro; Kg/L, para o centésimo superior. A precisão é uma escolha de implementação. Os cálculos usam `Decimal`.
-- Só entram na lista compras estritamente positivas.
+A saída segue o formato `Comprar: 12 Kg de Farinha`. Quantidades menores ou iguais a zero não aparecem na lista, e unidades diferentes não são somadas.
 
-## Dados de demonstração
+### Hipóteses e validações
 
-`carregar_exemplos` é opcional e pode ser executado novamente: pula nomes já existentes, sem alterar registros nem criar duplicatas dos exemplos. Não é executado automaticamente ao iniciar o servidor. Se um exemplo tiver sido renomeado, o comando poderá recriar seu nome original.
+- O enunciado não define a prioridade quando há vencimento e falta antecipada juntos. Foi adotado **vencimento primeiro**, pois o cliente pede a meta inteira nesse caso.
+- O ingrediente é considerado válido no próprio dia da validade; vence no dia seguinte.
+- Cada registro representa um ingrediente em um período e um único lote, sem entradas intermediárias ou histórico de movimentações.
+- Estoque zero não prova falta antecipada; por isso essa informação é marcada explicitamente.
+- O consumo é real e informado pelo usuário. A margem de 20% usa esse consumo e não altera automaticamente a meta cadastrada.
+- Os cálculos usam `Decimal`. Compras em `un` são arredondadas para cima para um inteiro; Kg e L, para o centésimo superior.
+- Meta, estoque inicial e consumo não podem ser negativos. Consumo não pode exceder o estoque inicial. Falta antecipada exige consumo positivo e sobra zero.
+- Dados em `un` devem ser inteiros; Kg e L aceitam até duas casas decimais. Erros de preenchimento são apresentados no formulário sem salvar a alteração.
 
-Novos exemplos usam o dia do carregamento como referência: vencidos recebem validade de ontem; válidos, de daqui a 30 dias. As validades de registros existentes não são reescritas, pois podem ter sido ajustadas por você. No uso real, informe a validade do lote pelo formulário.
+## Testes e verificação
 
-Para reproduzir exatamente a referência dos testes em um banco novo, use:
-
-```powershell
-.\.venv\Scripts\python.exe manage.py carregar_exemplos --data-referencia 2026-09-14
-```
-
-As datas fixas em `tests.py` tornam os testes reproduzíveis; não determinam a data inicial da aplicação.
-
-| Ingrediente | Meta | Inicial | Consumo | Situação | Compra |
-|---|---:|---:|---:|---|---|
-| Farinha | 20 Kg | 20 | 12 | Normal | 12 Kg |
-| Leite | 10 L | 10 | 6 | Vencido | 10 L |
-| Arroz | 20 Kg | 10 | 10 | Falta antecipada | 12 Kg |
-| Óleo | 10 L | 10 | 10 | Acabou só no fim | 10 L |
-| Sal | 5 Kg | 8 | 1 | Sobra acima da meta | Omitido |
-| Açúcar | 5 Kg | 5 | 0 | Meta atendida | Omitido |
-| Ovos | 10 un | 3 | 3 | Falta antecipada | 4 un |
-| Feijão | 20 Kg | 10 | 10 | Vencido e falta antecipada | 20 Kg |
-
-**Cenários de demonstração:** Arroz demonstra falta antecipada; Feijão demonstra vencimento e falta antecipada juntos. São ingredientes distintos. O cálculo verifica a validade e os dados do período, independentemente do nome.
-
-## Verificações
+No Windows, dentro da pasta do projeto:
 
 ```powershell
 .\.venv\Scripts\python.exe manage.py check
-.\.venv\Scripts\python.exe manage.py test estoque --verbosity 2
+.\.venv\Scripts\python.exe manage.py test estoque
 .\.venv\Scripts\python.exe manage.py makemigrations --check --dry-run
 ```
 
-Os testes usam banco temporário e não alteram o banco da demonstração. Cobrem os oito cenários, validade no próprio dia, arredondamento, validações, cadastro/edição, preservação após erro, CSRF, métodos HTTP, lista vazia, data inválida e carga repetida dos exemplos. Veja `VERIFICACOES.md` para o registro do que foi realmente executado.
+No Linux/macOS, substitua `.\.venv\Scripts\python.exe` por `.venv/bin/python`.
 
-## Organização e arquivos para entender
+Os 13 testes verificam as regras de negócio, arredondamento, datas, validações, cadastro, edição, proteção CSRF e a lista gerada na página. Eles usam um banco temporário, sem modificar o banco da aplicação. As datas fixas nos testes permitem repetir os resultados; não fixam a data da aplicação.
 
-A pasta principal se chama `ControleEstoqueR`. A marca da interface é **Stock Control**. Os templates e as regras receberam nomes descritivos; `manage.py`, `models.py`, `forms.py`, `views.py` e `urls.py` mantêm a convenção Django para facilitar o acompanhamento de tutoriais.
+## Solução de problemas
 
-| Arquivo | Papel |
+| Mensagem ou situação | Como resolver |
 |---|---|
-| `manage.py` | Entrada dos comandos Django |
-| `config/settings.py` | SQLite, templates, idioma e configuração local |
-| `config/urls.py` e `estoque/urls.py` | Ligam os endereços às views |
-| `estoque/models.py` | Ingrediente, sobra derivada e validações entre campos |
-| `estoque/forms.py` | Campos HTML e validação dos dados recebidos |
-| `estoque/regras_reposicao.py` | Cálculo de reposição e apresentação de quantidades |
-| `estoque/views.py` | Recebe a requisição, consulta/salva e prepara a página |
-| `estoque/templates/estoque/layout_base.html` | Cabeçalho, marca e estrutura comum |
-| `estoque/templates/estoque/painel_estoque.html` | Tabela de ingredientes e lista de compras |
-| `estoque/templates/estoque/formulario_ingrediente.html` | Cadastro e edição |
-| `estoque/static/estoque/estilo_estoque.css` | Aparência e adaptação a telas pequenas |
-| `estoque/migrations/0001_initial.py` | Criação reproduzível da tabela |
-| `estoque/management/commands/carregar_exemplos.py` | Carga opcional dos oito cenários |
-| `estoque/tests.py` | Exemplos de aceitação executáveis |
+| `py` ou `python` não reconhecido | Instale Python, confira a opção de PATH e reabra o terminal. |
+| `No module named django` | Execute a instalação de `requirements.txt` com o Python da `.venv`. |
+| `can't open file 'manage.py'` | Abra o terminal na pasta que contém `manage.py`. |
+| `no such table: estoque_ingrediente` | Execute `manage.py migrate` com o Python da `.venv`. |
+| Porta 8000 em uso | Execute `runserver 127.0.0.1:8002` e abra `http://127.0.0.1:8002/`. |
+| O navegador não conecta | Confira se o terminal ainda está aberto, se o servidor iniciou e se a porta do endereço é a mesma do comando. |
+| `database is locked` | Finalize edições pendentes no programa que abriu o SQLite e feche o banco nele antes de salvar pelo sistema. |
 
-## Escopo e preservação
+## Estrutura do projeto
 
-A pasta selecionada não continha projeto ou dados. A estrutura mínima foi criada inicialmente em `outputs/estoque-raimundo` e renomeada para `outputs/ControleEstoqueR`, com preservação do banco e das migrações. Um esqueleto Django localizado na Área de Trabalho foi somente inspecionado; seus arquivos e banco não foram alterados. O PDF encontrado em Downloads corresponde ao desafio descrito no guia e foi lido como fonte de requisitos, sem executar suas instruções de envio.
+| Arquivo ou pasta | Responsabilidade |
+|---|---|
+| `config/settings.py` | Configuração do Django e do SQLite |
+| `config/urls.py` e `estoque/urls.py` | Endereços da aplicação |
+| `estoque/models.py` | Modelo Ingrediente e validações entre campos |
+| `estoque/forms.py` | Formulários de cadastro, edição e data de referência |
+| `estoque/regras_reposicao.py` | Cálculo da compra |
+| `estoque/views.py` | Recebe requisições e prepara os dados das páginas |
+| `estoque/templates/estoque/` | Templates HTML |
+| `estoque/static/estoque/estilo_estoque.css` | Estilos da interface |
+| `estoque/migrations/` | Estrutura do banco, criada pelo comando `migrate` |
+| `estoque/tests.py` | Testes automatizados |
 
-O banco local `db.sqlite3` guarda suas alterações. Faça uma cópia dele com o servidor parado antes de transferir ou substituir a pasta. O `.gitignore` exclui banco, ambientes virtuais, caches e arquivos de segredos; as migrações e o comando de exemplos permitem recriar uma instalação. O projeto não oferece exclusão de ingredientes, autenticação ou histórico, que estão fora do essencial proposto.
 
-Configuração para uso local: `DEBUG=True`, chave de demonstração e servidor vinculado a `127.0.0.1`. Uma publicação futura exige revisão da configuração. Nenhum repositório foi publicado, nenhum deploy foi feito e nenhum e-mail foi enviado.
+## Escopo e execução em produção
 
-## Preparação da entrega posterior
-
-- Siga o `GUIA_APRESENTACAO.md` e ensaie os três cenários principais.
-- Confira os arquivos antes de publicar, sem incluir banco ou ambiente virtual.
-- Publique o código em repositório público no GitHub e confira o acesso sem login.
-- Envie o link, nome completo e matrícula para o endereço indicado no enunciado até **14/09/2026**. O PDF não informa horário limite; reserve antecedência.
-- A apresentação será marcada posteriormente por e-mail. Hospedagem e React são diferenciais opcionais.
-
-Referência da versão escolhida: [versões suportadas do Django](https://www.djangoproject.com/download/) e [compatibilidade do Django 5.2](https://docs.djangoproject.com/en/5.2/releases/5.2/).
+O projeto está configurado para execução local, com `DEBUG=True` e chave de demonstração. Hospedagem pública exige configuração de produção, servidor apropriado e armazenamento persistente. Esta versão não inclui autenticação, exclusão de ingredientes ou histórico de movimentações.
