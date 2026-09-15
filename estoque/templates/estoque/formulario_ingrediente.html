@@ -1,0 +1,12 @@
+{% extends 'estoque/layout_base.html' %}
+{% block title %}{% if editando %}Editar{% else %}Cadastrar{% endif %} ingrediente • Stock Control{% endblock %}
+{% block content %}
+<a class="back" href="{{ voltar }}">← Voltar ao estoque</a>
+<section class="heading"><div><p class="eyebrow">CUIDADO COM CADA INGREDIENTE</p><h1>{% if editando %}Editar{% else %}Cadastrar{% endif %} ingrediente</h1><p>Informe os dados reais de um único período e lote.</p></div></section>
+<form method="post" class="panel ingredient-form" novalidate>{% csrf_token %}
+{% if form.errors %}<div class="error-summary" role="alert">Não foi possível salvar. Revise os campos indicados abaixo.</div>{% endif %}
+{{ form.non_field_errors }}
+<div class="form-grid">{% for field in form %}<div class="field {% if field.name == 'acabou_antes_fim_mes' %}wide checkbox-field{% endif %}">{% if field.name == 'acabou_antes_fim_mes' %}<div>{{ field }}{{ field.label_tag }}</div>{% else %}{{ field.label_tag }}{{ field }}{% endif %}{% if field.help_text %}<small id="{{ field.auto_id }}_helptext">{{ field.help_text }}</small>{% endif %}{{ field.errors }}</div>{% endfor %}</div>
+<p class="note">Kg e L aceitam até duas casas decimais. Para un, use números inteiros. A sobra será calculada automaticamente.</p><div class="actions"><button type="submit">Salvar ingrediente</button><a class="secondary button" href="{{ voltar }}">Cancelar</a></div>
+</form>
+{% endblock %}

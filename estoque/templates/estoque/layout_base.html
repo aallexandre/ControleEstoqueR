@@ -1,0 +1,19 @@
+{% load static %}
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Stock Control{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'estoque/estilo_estoque.css' %}">
+</head>
+<body>
+  <a class="skip" href="#conteudo">Ir para o conteúdo</a>
+  <header><div class="topbar"><a class="brand" href="{% url 'estoque:inicio' %}"><span class="brand-icon" aria-hidden="true">SC</span><span>Stock Control<small>CONTROLE DE ESTOQUE</small></span></a><span class="local">Estoque organizado, mês tranquilo.</span></div></header>
+  <main id="conteudo">
+    {% for message in messages %}<div class="message" role="status">{{ message }}</div>{% endfor %}
+    {% block content %}{% endblock %}
+  </main>
+  <footer>Stock Control <span>Planejamento mensal • Um lote por ingrediente</span></footer>
+</body>
+</html>
