@@ -3,8 +3,8 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 # Configuração exclusiva para demonstração local.
 SECRET_KEY = 'django-insecure-apenas-demonstracao-local-estoque-raimundo'
-DEBUG = True
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '[::1]']
+DEBUG = False
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '[::1]', 'controleestoquer.onrender.com']
 INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
